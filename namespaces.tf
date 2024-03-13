@@ -19,12 +19,20 @@ locals {
 resource "vault_namespace" "environments" {
   for_each  = var.namespaces
   path = each.key
+   lifecycle {
+    ignore_changes = all
+  }
+
 }
 resource "vault_namespace" "divisions" {
   depends_on = [ vault_namespace.environments ]
   for_each = {for key, value in local.divisions : key => value}
   path = each.value["path"]
   namespace = each.value["namespace"]
+  lifecycle {
+    ignore_changes = all
+  }
+
 }
 
 resource "vault_namespace" "child_namespaces" {
@@ -32,4 +40,8 @@ resource "vault_namespace" "child_namespaces" {
   for_each  = {for key, value in local.child_namespaces : key => value}
   path = each.value["path"]
   namespace = each.value["namespace"]
+  lifecycle {
+    ignore_changes = all
+  }
+
 }
